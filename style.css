@@ -1,0 +1,227 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #fdf8f3;
+  color: #2c1a0e;
+  min-height: 100vh;
+}
+
+img { display: block; max-width: 100%; }
+
+button { cursor: pointer; border: none; background: none; font-family: inherit; }
+select { font-family: inherit; }
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #fdf8f3;
+  border-bottom: 1px solid #e8d9c8;
+  padding: 15px 0;
+}
+
+.header-inner {
+  max-width: 1260px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo { display: flex; align-items: center; gap: .5rem; }
+.logo-icon { font-size: 1.5rem; }
+.logo-text {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: #c0392b;
+}
+
+.hero {
+  background: #f5ede0;
+  padding: 4rem 2rem;
+  border-bottom: 1px solid #e8d9c8;
+  text-align: center;
+}
+
+.hero-eyebrow {
+  font-size: .8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #8a6a52;
+  margin-bottom: 1rem;
+}
+
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+}
+
+.hero-title em { color: #c0392b; }
+
+.search-wrapper {
+  max-width: 500px;
+  margin: 0 auto;
+  display: flex;
+  position: relative;
+}
+
+.search-input {
+  width: 100%;
+  padding: 15px 40px 15px 15px;
+  font-size: 1rem;
+  border: 1px solid #e8d9c8;
+  border-radius: 50px;
+  outline: none;
+}
+
+.search-clear {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  font-size: 1rem;
+  display: none;
+}
+.search-clear.visible { display: block; }
+
+.controls-bar {
+  background: white;
+  border-bottom: 1px solid #e8d9c8;
+  padding: 1rem 2rem;
+}
+
+.controls-inner {
+  max-width: 1260px;
+  margin: 0 auto;
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filter-label { font-weight: bold; font-size: 0.8rem; }
+
+.select-ctrl {
+  padding: 8px 10px;
+  border: 1px solid #e8d9c8;
+  border-radius: 5px;
+}
+
+.controls-right { margin-left: auto; display: flex; align-items: center; gap: 1rem; }
+
+.main-content {
+  max-width: 1260px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem;
+}
+
+.recipe-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.hidden { display: none !important; }
+
+.loading-state, .error-state, .empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: #8a6a52;
+}
+
+.recipe-card {
+  background: white;
+  border: 1px solid #e8d9c8;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(44,26,14,.07);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+.recipe-card:hover { border-color: #c0392b; }
+
+.card-image-wrap { position: relative; height: 200px; }
+
+.card-image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: white;
+  padding: 4px 10px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.card-body { padding: 15px; flex: 1; display: flex; flex-direction: column; gap: 5px; }
+.card-meta { font-size: 0.8rem; color: #8a6a52; margin-bottom: 5px; display: flex; justify-content: space-between;}
+.card-title { font-size: 1.2rem; font-family: 'Playfair Display', serif;}
+
+.card-footer {
+  border-top: 1px solid #e8d9c8;
+  padding: 10px 15px;
+  font-size: 0.8rem;
+  color: #8a6a52;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-card {
+  background: white;
+  width: 90%;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 15px;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 1.5rem;
+  background: white;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+}
+
+.modal-hero-img { width: 100%; height: 300px; object-fit: cover; }
+.modal-info, .modal-section { padding: 20px; }
+.modal-title { font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 15px; }
+.modal-stats { display: flex; flex-wrap: wrap; gap: 15px; color: #8a6a52; margin-bottom: 15px; }
+
+.modal-section h3 { border-bottom: 1px solid #e8d9c8; padding-bottom: 5px; margin-bottom: 10px; }
+.ingredients-list { margin-left: 20px;}
+.ingredients-list li { margin-bottom: 5px; font-size: 0.9rem;}
+.instructions-list { margin-left: 20px;}
+.instructions-list li { margin-bottom: 10px; font-size: 0.9rem;}
+
+@media (max-width: 768px) {
+  .controls-inner { flex-direction: column; align-items: flex-start; }
+  .controls-right { margin-left: 0; }
+}

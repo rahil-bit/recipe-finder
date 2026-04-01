@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recipe Finder</title>
+  <link rel="stylesheet" href="style.css" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
+</head>
+
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">🍽</span>
+        <span class="logo-text">RecipeLore</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-content">
+      <p class="hero-eyebrow">Discover something delicious</p>
+      <h1 class="hero-title">Find your next<br /><em>recipe match</em></h1>
+
+      <div class="search-wrapper">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search recipes (e.g., Pizza)..."
+          autocomplete="off" />
+        <button class="search-clear" id="clearSearch" title="Clear Search">✕</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="controls-bar">
+    <div class="controls-inner">
+      <div class="filter-group">
+        <label class="filter-label">Cuisine</label>
+        <select id="cuisineFilter" class="select-ctrl">
+          <option value="">All cuisines</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Difficulty</label>
+        <select id="difficultyFilter" class="select-ctrl">
+          <option value="">Any difficulty</option>
+          <option value="Easy">Easy</option>
+          <option value="Medium">Medium</option>
+          <option value="Hard">Hard</option>
+        </select>
+      </div>
+
+      <div class="controls-right">
+        <span class="results-count" id="resultsCount"></span>
+      </div>
+    </div>
+  </section>
+
+  <main class="main-content">
+
+    <div class="loading-state hidden" id="loadingState">
+      <h3>Loading recipes...</h3>
+    </div>
+
+    <div class="error-state hidden" id="errorState">
+      <h3>Could not load recipes</h3>
+      <p>Check your connection and refresh the page.</p>
+    </div>
+
+    <div class="empty-state hidden" id="emptyState">
+      <h3>No recipes found</h3>
+      <p>Try searching for something else.</p>
+    </div>
+
+    <div class="recipe-grid hidden" id="recipeGrid"></div>
+
+  </main>
+
+  <div class="modal-overlay hidden" id="modalOverlay">
+    <div class="modal-card" id="modalCard">
+      <button class="modal-close" id="modalClose">✕</button>
+      <div class="modal-body" id="modalBody">
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
