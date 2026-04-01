@@ -140,5 +140,5 @@ recipe-finder/
 |---|---|---|
 | M1 — Setup | ✅ Done | Repo, README, API chosen |
 | M2 — API Integration | ✅ Done | Fetch, loading states, responsive display |
-| M3 — Core Features | ✅ Done | Search, filter, sort, favourites, dark mode |
+| M3 — Core Features | 🔜 Pending | Search, filter, sort, favourites, dark mode |
 | M4 — Deployment | 🔜 Pending | Deploy via GitHub Pages / Netlify / Vercel |
