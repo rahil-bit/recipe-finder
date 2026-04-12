@@ -1,5 +1,7 @@
-
 const allRecipes = [];
+const favoriteIds = [];  
+let showingFavoritesOnly = false;
+
 const recipeGrid = document.getElementById("recipeGrid");
 const loadingState = document.getElementById("loadingState");
 const errorState = document.getElementById("errorState");
@@ -9,6 +11,44 @@ const searchInput = document.getElementById("searchInput");
 const searchClearBtn = document.getElementById("clearSearch");
 const cuisineDropdown = document.getElementById("cuisineFilter");
 const difficultyDropdown = document.getElementById("difficultyFilter");
+const favoritesToggleBtn = document.getElementById("favoritesToggle");
+const favoritesCount = document.getElementById("favoritesCount");
+
+function isFavorite(recipeId) {
+  return favoriteIds.includes(recipeId);
+}
+
+function toggleFavorite(recipeId, event) {
+  event.stopPropagation();
+
+  if (isFavorite(recipeId)) {
+    const index = favoriteIds.indexOf(recipeId);
+    favoriteIds.splice(index, 1);
+  } else {
+    favoriteIds.push(recipeId);
+  }
+
+  updateFavoritesCount();
+
+  if (showingFavoritesOnly) {
+    filterAndDisplayRecipes();
+    return;
+  }
+
+  const heartBtn = document.querySelector(`.fav-btn[data-id="${recipeId}"]`);
+  if (heartBtn) {
+    heartBtn.classList.toggle("active", isFavorite(recipeId));
+    heartBtn.title = isFavorite(recipeId) ? "Remove from favorites" : "Add to favorites";
+    heartBtn.setAttribute("aria-label", isFavorite(recipeId) ? "Remove from favorites" : "Add to favorites");
+  }
+}
+
+function updateFavoritesCount() {
+  const count = favoriteIds.length;
+  favoritesCount.textContent = count > 0 ? count : "";
+  favoritesCount.classList.toggle("visible", count > 0);
+}
+
 
 function startApp() {
   setupEventListeners();
@@ -21,11 +61,11 @@ async function downloadRecipes() {
   try {
     const response = await fetch("https://dummyjson.com/recipes?limit=0");
     const data = await response.json();
-    
+
     for (let i = 0; i < data.recipes.length; i++) {
       allRecipes.push(data.recipes[i]);
     }
-    
+
     populateCuisineDropdown();
     filterAndDisplayRecipes();
 
@@ -39,12 +79,16 @@ function filterAndDisplayRecipes() {
   const searchText = searchInput.value.toLowerCase().trim();
   const selectedCuisine = cuisineDropdown.value;
   const selectedDifficulty = difficultyDropdown.value;
-  
+
   const matchingRecipes = [];
 
   for (let i = 0; i < allRecipes.length; i++) {
     const recipe = allRecipes[i];
-    
+
+    if (showingFavoritesOnly && !isFavorite(recipe.id)) {
+      continue;
+    }
+
     let matchesSearch = true;
     if (searchText !== "") {
       if (recipe.name.toLowerCase().includes(searchText) === false) {
@@ -76,10 +120,13 @@ function filterAndDisplayRecipes() {
   displayGrid(matchingRecipes);
 }
 
-
 function displayGrid(recipesToDisplay) {
   if (recipesToDisplay.length === 0) {
-    showState("empty");
+    if (showingFavoritesOnly) {
+      showState("emptyFavorites");
+    } else {
+      showState("empty");
+    }
     return;
   }
 
@@ -89,12 +136,20 @@ function displayGrid(recipesToDisplay) {
   for (let i = 0; i < recipesToDisplay.length; i++) {
     const recipe = recipesToDisplay[i];
     const prepTime = recipe.prepTimeMinutes + recipe.cookTimeMinutes;
+    const favorited = isFavorite(recipe.id);
 
     const cardHTML = `
       <article class="recipe-card" onclick="openRecipeModal(${recipe.id})">
         <div class="card-image-wrap">
           <img src="${recipe.image}" alt="${recipe.name}">
           <span class="card-badge">${recipe.cuisine}</span>
+          <button
+            class="fav-btn ${favorited ? "active" : ""}"
+            data-id="${recipe.id}"
+            onclick="toggleFavorite(${recipe.id}, event)"
+            title="${favorited ? "Remove from favorites" : "Add to favorites"}"
+            aria-label="${favorited ? "Remove from favorites" : "Add to favorites"}"
+          >&#9829;</button>
         </div>
         <div class="card-body">
           <div class="card-meta">
@@ -108,10 +163,11 @@ function displayGrid(recipesToDisplay) {
         </div>
       </article>
     `;
-    
+
     recipeGrid.innerHTML += cardHTML;
   }
 }
+
 
 function openRecipeModal(recipeId) {
   let recipeInfo = null;
@@ -134,10 +190,22 @@ function openRecipeModal(recipeId) {
     instructionsHTML += "<li>" + recipeInfo.instructions[i] + "</li>";
   }
 
+  const favorited = isFavorite(recipeInfo.id);
+
   document.getElementById("modalBody").innerHTML = `
-    <img class="modal-hero-img" src="${recipeInfo.image}">
+    <img class="modal-hero-img" src="${recipeInfo.image}" alt="${recipeInfo.name}">
     <div class="modal-info">
-      <h2 class="modal-title">${recipeInfo.name}</h2>
+      <div class="modal-title-row">
+        <h2 class="modal-title">${recipeInfo.name}</h2>
+        <button
+          class="modal-fav-btn ${favorited ? "active" : ""}"
+          id="modalFavBtn"
+          onclick="toggleFavoriteFromModal(${recipeInfo.id})"
+          title="${favorited ? "Remove from favorites" : "Add to favorites"}"
+        >
+          ${favorited ? "♥ Saved" : "♡ Save Recipe"}
+        </button>
+      </div>
       <div class="modal-stats">
         <span>⭐ ${recipeInfo.rating}</span>
         <span>🕒 Prep: ${recipeInfo.prepTimeMinutes}m</span>
@@ -159,21 +227,56 @@ function openRecipeModal(recipeId) {
   document.body.style.overflow = "hidden";
 }
 
-document.getElementById("modalClose").addEventListener("click", function() {
+function toggleFavoriteFromModal(recipeId) {
+  if (isFavorite(recipeId)) {
+    const index = favoriteIds.indexOf(recipeId);
+    favoriteIds.splice(index, 1);
+  } else {
+    favoriteIds.push(recipeId);
+  }
+  updateFavoritesCount();
+  const modalFavBtn = document.getElementById("modalFavBtn");
+  if (modalFavBtn) {
+    const nowFavorited = isFavorite(recipeId);
+    modalFavBtn.classList.toggle("active", nowFavorited);
+    modalFavBtn.title = nowFavorited ? "Remove from favorites" : "Add to favorites";
+    modalFavBtn.innerHTML = nowFavorited ? "♥ Saved" : "♡ Save Recipe";
+  }
+  const heartBtn = document.querySelector(`.fav-btn[data-id="${recipeId}"]`);
+  if (heartBtn) {
+    heartBtn.classList.toggle("active", isFavorite(recipeId));
+  }
+}
+
+document.getElementById("modalClose").addEventListener("click", function () {
   document.getElementById("modalOverlay").classList.add("hidden");
-  document.body.style.overflow = ""; 
+  document.body.style.overflow = "";
+  if (showingFavoritesOnly) {
+    filterAndDisplayRecipes();
+  }
 });
 
+document.getElementById("modalOverlay").addEventListener("click", function (e) {
+  if (e.target === this) {
+    document.getElementById("modalOverlay").classList.add("hidden");
+    document.body.style.overflow = "";
+    if (showingFavoritesOnly) {
+      filterAndDisplayRecipes();
+    }
+  }
+});
 
 function showState(stateName) {
   loadingState.classList.add("hidden");
   errorState.classList.add("hidden");
   emptyState.classList.add("hidden");
+  document.getElementById("emptyFavoritesState").classList.add("hidden");
   recipeGrid.classList.add("hidden");
 
   if (stateName === "loading") loadingState.classList.remove("hidden");
   if (stateName === "error") errorState.classList.remove("hidden");
   if (stateName === "empty") emptyState.classList.remove("hidden");
+  if (stateName === "emptyFavorites") document.getElementById("emptyFavoritesState").classList.remove("hidden");
   if (stateName === "grid") recipeGrid.classList.remove("hidden");
 }
 
@@ -189,7 +292,7 @@ function populateCuisineDropdown() {
 }
 
 function setupEventListeners() {
-  searchInput.addEventListener("input", function() {
+  searchInput.addEventListener("input", function () {
     if (searchInput.value.length > 0) {
       searchClearBtn.classList.add("visible");
     } else {
@@ -198,7 +301,7 @@ function setupEventListeners() {
     filterAndDisplayRecipes();
   });
 
-  searchClearBtn.addEventListener("click", function() {
+  searchClearBtn.addEventListener("click", function () {
     searchInput.value = "";
     searchClearBtn.classList.remove("visible");
     filterAndDisplayRecipes();
@@ -206,6 +309,13 @@ function setupEventListeners() {
 
   cuisineDropdown.addEventListener("change", filterAndDisplayRecipes);
   difficultyDropdown.addEventListener("change", filterAndDisplayRecipes);
+
+  favoritesToggleBtn.addEventListener("click", function () {
+    showingFavoritesOnly = !showingFavoritesOnly;
+    favoritesToggleBtn.classList.toggle("active", showingFavoritesOnly);
+    favoritesToggleBtn.textContent = showingFavoritesOnly ? "♥ My Favorites" : "♡ My Favorites";
+    filterAndDisplayRecipes();
+  });
 }
 
 startApp();

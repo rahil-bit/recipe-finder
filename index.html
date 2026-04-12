@@ -37,6 +37,7 @@
 
   <section class="controls-bar">
     <div class="controls-inner">
+
       <div class="filter-group">
         <label class="filter-label">Cuisine</label>
         <select id="cuisineFilter" class="select-ctrl">
@@ -54,9 +55,18 @@
         </select>
       </div>
 
+      <!-- ★ Favorites toggle button -->
+      <div class="filter-group">
+        <button class="favorites-toggle-btn" id="favoritesToggle">
+          ♡ My Favorites
+          <span class="fav-count" id="favoritesCount"></span>
+        </button>
+      </div>
+
       <div class="controls-right">
         <span class="results-count" id="resultsCount"></span>
       </div>
+
     </div>
   </section>
 
@@ -76,6 +86,12 @@
       <p>Try searching for something else.</p>
     </div>
 
+    <div class="empty-state hidden" id="emptyFavoritesState">
+      <div class="empty-fav-icon">♡</div>
+      <h3>No favorites yet</h3>
+      <p>Tap the ♥ on any recipe card to save it here.</p>
+    </div>
+
     <div class="recipe-grid hidden" id="recipeGrid"></div>
 
   </main>
@@ -83,8 +99,7 @@
   <div class="modal-overlay hidden" id="modalOverlay">
     <div class="modal-card" id="modalCard">
       <button class="modal-close" id="modalClose">✕</button>
-      <div class="modal-body" id="modalBody">
-      </div>
+      <div class="modal-body" id="modalBody"></div>
     </div>
   </div>
 
